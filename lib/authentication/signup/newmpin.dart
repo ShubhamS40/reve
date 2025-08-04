@@ -68,6 +68,17 @@ class _NewMPINState extends State<NewMPIN> {
         return;
       }
 
+      // Get userId from secure storage
+      final userId = await _secureStorage.read(key: 'userId');
+
+      if (userId == null) {
+        setState(() {
+          _errorMessage = 'User ID not found. Please try again.';
+          _isLoading = false;
+        });
+        return;
+      }
+
       // Call reset MPIN API
       final success =
           await _authService.resetMpin(mobileNumber, mpinController.text);

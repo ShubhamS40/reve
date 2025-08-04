@@ -6,9 +6,10 @@ import '../signup/AuthenticationService.dart';
 
 class UserProfileService {
   final Authenticationservice _authenticationservice = Authenticationservice();
-  // Use the same host as AuthenticationService for consistency
+  // Base URL for profile endpoints
   final String baseUrl =
-      'http://192.168.0.101:3000/index/profile'; // For Android emulator pointing to localhost
+      'http://192.168.0.101:3000'; // For Android emulator pointing to localhost
+  final String profilePath = '/index/profile'; // Profile-specific path
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   Future<Map<String, String>> _getHeaders() async {
@@ -24,7 +25,8 @@ class UserProfileService {
       {Map<String, dynamic>? body}) async {
     String? accessToken = await _authenticationservice.getAccessToken();
 
-    Uri url = Uri.parse('$baseUrl/$endpoint');
+    // Construct the full URL properly by combining baseUrl and profilePath
+    Uri url = Uri.parse('$baseUrl$profilePath/$endpoint');
 
     try {
       // Include authentication token if available

@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'REVA',
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      home: SubscriptionPlansScreen(userId: "kk"),
     );
   }
 }

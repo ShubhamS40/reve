@@ -5,10 +5,11 @@ import 'package:http/http.dart' as http;
 class BaseApiService {
   final FlutterSecureStorage _storage = FlutterSecureStorage();
   final String baseUrl =
-      'http://192.168.0.101:3000/index/qr'; // For Android emulator pointing to localhost
+      'http://192.168.0.101:3000'; // For Android emulator pointing to localhost
+  final String qrPath = '/index/qr'; // QR-specific path
 
   Future<String?> _refreshAccessToken(String refreshToken) async {
-    final url = Uri.parse('$baseUrl/refresh');
+    final url = Uri.parse('$baseUrl$qrPath/refresh');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -34,7 +35,7 @@ class BaseApiService {
       throw Exception('Missing tokens');
     }
 
-    Uri url = Uri.parse('$baseUrl/$endpoint');
+    Uri url = Uri.parse('$baseUrl$qrPath/$endpoint');
 
     Future<http.Response> send(String token) {
       return http.post(
@@ -69,7 +70,7 @@ class BaseApiService {
       throw Exception('Missing tokens');
     }
 
-    Uri url = Uri.parse('$baseUrl/$endpoint');
+    Uri url = Uri.parse('$baseUrl$qrPath/$endpoint');
 
     Future<http.Response> send(String token) {
       return http.get(

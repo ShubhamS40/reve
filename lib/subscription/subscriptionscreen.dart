@@ -100,7 +100,7 @@ class SubscriptionDetails {
 }
 
 class SubscriptionService {
-  static const String baseUrl = 'http://localhost:3000';
+  static const String baseUrl = 'http://192.168.0.101:3000';
 
   Future<List<SubscriptionPlan>> getSubscriptionPlans() async {
     try {

@@ -398,26 +398,27 @@ class ProfileCard extends StatelessWidget {
 // Example usage with subscription data
 class ProfileCardExample extends StatelessWidget {
   // Sample subscription data
-  final Map<String, dynamic> subscriptionData = {
-    "message": "Subscription successful",
-    "subscription": {
-      "userId": "688e69d3dd8240d79b17c3d8",
-      "planType": "SILVER",
-      "price": 999,
-      "durationDays": 365,
-      "isActive": true,
-      "_id": "688f64765b9263c9da4ab38a",
-      "startDate": "2025-08-03T13:30:30.320Z",
-      "endDate": "2026-08-03T13:30:30.320Z",
-      "__v": 0
-    }
-  };
+  final Map<String, dynamic>? subscriptionData;
 
-  ProfileCardExample({Key? key}) : super(key: key);
+  ProfileCardExample({Key? key, this.subscriptionData}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final subscription = subscriptionData['subscription'];
+    final Map<String, dynamic> defaultData = {
+      "message": "Subscription successful",
+      "subscription": {
+        "userId": "688e69d3dd8240d79b17c3d8",
+        "planType": "BASIC",
+        "price": 0,
+        "durationDays": 0,
+        "isActive": false,
+        "startDate": DateTime.now().toIso8601String(),
+        "endDate": DateTime.now().toIso8601String(),
+      }
+    };
+
+    final data = subscriptionData ?? defaultData;
+    final subscription = data['subscription'];
     final planType = subscription['planType'] ?? 'BASIC';
 
     return Scaffold(
@@ -626,7 +627,9 @@ class ProfileCardExample extends StatelessWidget {
                         style: TextStyle(color: Color(0xFFB0B0B0)),
                       ),
                       Text(
-                        '₹${subscription['price']}',
+                        subscription['price'] != null
+                            ? '₹${subscription['price']}'
+                            : '₹0',
                         style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold),
                       ),
@@ -641,7 +644,9 @@ class ProfileCardExample extends StatelessWidget {
                         style: TextStyle(color: Color(0xFFB0B0B0)),
                       ),
                       Text(
-                        '${subscription['durationDays']} days',
+                        subscription['durationDays'] != null
+                            ? '${subscription['durationDays']} days'
+                            : '0 days',
                         style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold),
                       ),
@@ -659,15 +664,17 @@ class ProfileCardExample extends StatelessWidget {
                         padding:
                             EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: subscription['isActive']
+                          color: subscription['isActive'] == true
                               ? Colors.green.withOpacity(0.2)
                               : Colors.red.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
-                          subscription['isActive'] ? 'Active' : 'Inactive',
+                          subscription['isActive'] == true
+                              ? 'Active'
+                              : 'Inactive',
                           style: TextStyle(
-                            color: subscription['isActive']
+                            color: subscription['isActive'] == true
                                 ? Colors.green
                                 : Colors.red,
                             fontWeight: FontWeight.bold,

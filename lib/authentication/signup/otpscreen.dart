@@ -129,10 +129,10 @@ class _OtpScreenState extends State<OtpScreen> {
       final result = await _authService.sendOtp(mobileNumber);
 
       if (mounted) {
-        if (result != null && result['success'] == true) {
+        if (result != null) {
           setState(() {
             _isOtpSent = true;
-            _userId = result['userId'];
+            _userId = result['userId'] as String;
             _isLoading = false;
             _isResending = false;
           });
@@ -153,8 +153,9 @@ class _OtpScreenState extends State<OtpScreen> {
             _isLoading = false;
             _isResending = false;
           });
-          _showError(
-              result?['message'] ?? 'Failed to send OTP. Please try again.');
+          _showError(result != null && result.containsKey('message')
+              ? result['message'] as String
+              : 'Failed to send OTP. Please try again.');
         }
       }
     } catch (e) {

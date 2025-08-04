@@ -8,32 +8,34 @@ class SubscriptionService {
 
   // Update this to your actual server URL
   final String baseUrl =
-      'http://localhost:3000/index/subscription/plans'; // Change localhost to your server IP for device testing
+      'http://192.168.0.101:3000'; // Change localhost to your server IP for device testing
+  final String subscriptionPath = '/index/subscription/plans';
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   // Check if the user has an active subscription
   Future<Map<String, dynamic>?> checkSubscription() async {
     try {
-      final response =
-          await _authenticationservice.authenticatedGet('subscription/check');
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return data;
-      } else if (response.statusCode == 401) {
-        print('User not authenticated');
-        return {
-          'hasActiveSubscription': false,
-          'message': 'User not authenticated'
-        };
-      } else {
-        print('Error checking subscription: ${response.statusCode}');
-        print('Response body: ${response.body}');
-        return null;
+      String? userId = await _secureStorage.read(key: 'userId');
+      if (userId == null) {
+        return {'hasActiveSubscription': false, 'message': 'User ID not found'};
       }
+
+      // Use the checkSubscription method from AuthenticationService
+      bool hasSubscription =
+          await _authenticationservice.checkSubscription(userId);
+
+      return {
+        'hasActiveSubscription': hasSubscription,
+        'message': hasSubscription
+            ? 'Active subscription found'
+            : 'No active subscription'
+      };
     } catch (e) {
       print('Exception checking subscription: $e');
-      return null;
+      return {
+        'hasActiveSubscription': false,
+        'message': 'Error checking subscription'
+      };
     }
   }
 
@@ -51,10 +53,11 @@ class SubscriptionService {
   // Get all available subscription plans
   Future<Map<String, dynamic>?> getSubscriptionPlans() async {
     try {
-      print('Fetching subscription plans from: $baseUrl/plans');
+      print(
+          'Fetching subscription plans from: $baseUrl$subscriptionPath/plans');
 
       final response = await http.get(
-        Uri.parse('$baseUrl/plans'),
+        Uri.parse('$baseUrl$subscriptionPath/plans'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',

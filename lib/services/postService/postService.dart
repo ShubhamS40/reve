@@ -6,7 +6,8 @@ import 'package:reva/models/PostModel/postModel.dart';
 class PostService {
   final FlutterSecureStorage _flutterSecureStorage = FlutterSecureStorage();
   final String baseUrl =
-      'http://192.168.0.101:3000/index/posts'; // For Android emulator pointing to localhost
+      'http://192.168.0.101:3000'; // For Android emulator pointing to localhost
+  final String postsPath = '/index/posts'; // Posts-specific path
 
   Future<String?> _getAuthToken() async {
     // Replace this with your secure storage logic
@@ -20,7 +21,7 @@ class PostService {
     String visibility = "public",
   }) async {
     final token = await _getAuthToken();
-    final url = Uri.parse('$baseUrl/createPost');
+    final url = Uri.parse('$baseUrl$postsPath/createPost');
 
     final response = await http.post(
       url,
@@ -47,7 +48,7 @@ class PostService {
   /// Fetch all posts
   Future<List<PostModel>> getAllPosts() async {
     final token = await _getAuthToken();
-    final url = Uri.parse('$baseUrl');
+    final url = Uri.parse('$baseUrl$postsPath');
 
     final response = await http.get(
       url,
@@ -69,7 +70,7 @@ class PostService {
   /// Get post by ID
   Future<PostModel?> getPostById(String postId) async {
     final token = await _getAuthToken();
-    final url = Uri.parse('$baseUrl/$postId');
+    final url = Uri.parse('$baseUrl$postsPath/$postId');
 
     final response = await http.get(
       url,
@@ -95,7 +96,7 @@ class PostService {
     String? visibility,
   }) async {
     final token = await _getAuthToken();
-    final url = Uri.parse('$baseUrl/$postId');
+    final url = Uri.parse('$baseUrl$postsPath/$postId');
 
     final response = await http.put(
       url,
@@ -122,7 +123,7 @@ class PostService {
   /// Delete a post
   Future<bool> deletePost(String postId) async {
     final token = await _getAuthToken();
-    final url = Uri.parse('$baseUrl/$postId');
+    final url = Uri.parse('$baseUrl$postsPath/$postId');
 
     final response = await http.delete(
       url,
@@ -142,7 +143,7 @@ class PostService {
   /// Toggle like on a post
   Future<bool> toggleLike(String postId) async {
     final token = await _getAuthToken();
-    final url = Uri.parse('$baseUrl/$postId/like');
+    final url = Uri.parse('$baseUrl$postsPath/$postId/like');
 
     final response = await http.put(
       url,
